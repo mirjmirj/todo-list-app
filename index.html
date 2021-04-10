@@ -2,12 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/fav.png" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>App</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title>Todo App</title>
   </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/main.js"></script>
-  </body>
+	<body>
+		<div class="app">
+			<header>
+				<h1>todos</h1>
+			</header>
+
+			<div class="main" data-item="main">
+				<input
+					id="toggle-items"
+					class="toggle-items"
+					data-item="toggle-items"
+					type="checkbox"
+				/>
+
+				<label for="toggle-items">Mark all as complete</label>
+
+				<ul class="item-list" data-item="list"></ul>
+			</div>
+
+			<footer class="footer" data-item="footer">
+				<ul class="filters" data-item="filters">
+				</ul>
+
+				<button class="clear-completed" data-item="clear-completed">
+					Clear completed
+				</button>
+			</footer>
+		</div>
+
+		<div class="info">
+			<p>Double-click to edit a todo</p>
+		</div>
+	</body>
 </html>
