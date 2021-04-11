@@ -11,6 +11,12 @@
 		<div class="app">
 			<header>
 				<h1>todos</h1>
+				<input
+					class="new-item"
+					data-item="new"
+					placeholder="What needs to be done?"
+					autofocus
+				/>
 			</header>
 
 			<div class="main" data-item="main">
@@ -27,7 +33,20 @@
 			</div>
 
 			<footer class="footer" data-item="footer">
+				<span class="item-count" data-item="count">
+          <strong>0</strong> items left
+        </span>
+
 				<ul class="filters" data-item="filters">
+					<li>
+						<a class="selected" href="#/">All</a>
+					</li>
+					<li>
+						<a href="#/active">Active</a>
+					</li>
+					<li>
+						<a href="#/completed">Completed</a>
+					</li>
 				</ul>
 
 				<button class="clear-completed" data-item="clear-completed">
@@ -39,5 +58,7 @@
 		<div class="info">
 			<p>Double-click to edit a todo</p>
 		</div>
+
+		<script type="module" src="/javascripts/app.js"></script>
 	</body>
 </html>
