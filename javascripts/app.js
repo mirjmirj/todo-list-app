@@ -1,7 +1,7 @@
 import { ItemStore } from "./store.js";
 import { assign, getURL } from "./utilities.js";
 
-// var Items = new ItemStore("items");
+var Items = new ItemStore("items");
 
 var Main = {
 	$: {
@@ -20,10 +20,93 @@ var Main = {
 
 		displayFooter(display) {
 			document.querySelector('[data-item="footer"]').style.display = display ? "block" : "none";
-		}
+		},
+
+		setFilter(filter) {
+			document.querySelectorAll(`[data-item="filters"] a`).forEach((element) => {
+				if (element.matches(`[href="#/${filter}"]`)) {
+					element.classList.add("selected");
+				} else {
+					element.classList.remove("selected");
+				}
+			});
+		},
+
+		displayNumber(number) {
+      let renderedHTML = `<strong>${number} item</strong>${number === 1 ? "" : "s"} left`;
+
+      document.querySelector('[data-item="count"]').replaceChildren();
+      document.querySelector('[data-item="count"]').insertAdjacentHTML('afterbegin', renderedHTML);
+		},
 	},
 
 	init() {
+		Items.addEventListener("save", Main.render);
+		Main.filter = getURL();
+
+		window.addEventListener("hashchange", () => {
+			Main.filter = getURL();
+			Main.render();
+		});
+
+		Main.$.input.addEventListener("keyup", (e) => {
+			if (e.key === "Enter" && e.target.value.length) {
+				Items.create({
+					completed: false,
+					title: e.target.value,
+					id: window.crypto.randomUUID()
+				});
+				Main.$.input.value = "";
+			}
+		});
+
+		Main.$.clear.addEventListener("click", (e) => {
+			Items.clearCompleted();
+		});
+
+		Main.$.toggleAll.addEventListener("click", (e) => {
+			Items.toggleAll();
+		});
+
+		Main.bindItemEvents();
+		Main.render();
+	},
+
+	itemEvent(event, selector, handler) {
+		assign(Main.$.list, selector, event, (e) => {
+			let $el = e.target.closest("[data-id]");
+			handler(Items.get($el.dataset.id), $el, e);
+		});
+	},
+
+	bindItemEvents() {
+		Main.itemEvent("click", '[data-item="destroy"]', (item) => Items.destroy(item));
+		Main.itemEvent("click", '[data-item="toggle"]', (item) => Items.toggle(item));
+
+		Main.itemEvent("dblclick", '[data-item="label"]', (_, $li) => {
+			$li.classList.add("editing");
+			$li.querySelector('[data-item="edit"]').focus();
+		});
+    
+		Main.itemEvent("keyup", '[data-item="edit"]', (item, $li, e) => {
+			let $input = $li.querySelector('[data-item="edit"]');
+
+			if (e.key === "Enter" && $input.value) {
+				$li.classList.remove("editing");
+				Items.update({ ...item, title: $input.value });
+			}
+
+			if (e.key === "Escape") {
+				document.activeElement.blur();
+			}
+		});
+
+		Main.itemEvent("focusout", '[data-item="edit"]', (item, $li, e) => {
+			if ($li.classList.contains("editing")) {
+				Main.render();
+			}
+		});
+	},
 
 	createItem(item) {
 		var li = document.createElement("li");
